@@ -24,6 +24,8 @@ type StudySessionRepository interface {
 	Update(session *StudySession) error
 	Delete(id uint) error
 	GetUserStats(userID uint) (*StudyStats, error)
+	FindUpcomingSessions(upcomingTime time.Time) ([]StudySession, error)
+	FindCompletedSessions(userID uint, from, to time.Time) ([]StudySession, error)
 }
 
 type StudyStats struct {
