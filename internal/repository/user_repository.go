@@ -19,7 +19,7 @@ func (r *userRepository) Create(user *domain.User) error {
 
 func (r *userRepository) FindByID(id uint) (*domain.User, error) {
 	var user domain.User
-	err := r.db.Find(&user, id).Error
+	err := r.db.First(&user, id).Error
 	return &user, err
 }
 

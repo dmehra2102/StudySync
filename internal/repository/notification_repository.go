@@ -21,7 +21,7 @@ func (r *notificationRepository) Create(notification *domain.Notification) error
 
 func (r *notificationRepository) FindByID(id uint) (*domain.Notification, error) {
 	var notification domain.Notification
-	err := r.db.Find(&notification, id).Error
+	err := r.db.First(&notification, id).Error
 	return &notification, err
 }
 
@@ -49,7 +49,7 @@ func (r *notificationRepository) MarkAsRead(id uint) error {
 func (r *notificationRepository) MarkAllAsRead(userID uint) error {
 	return r.db.Model(&domain.Notification{}).
 		Where("user_id = ? AND read = ?", userID, false).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"read":    true,
 			"read_at": time.Now(),
 		}).Error

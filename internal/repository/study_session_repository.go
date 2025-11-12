@@ -21,7 +21,7 @@ func (r *studySessionRepository) Create(session *domain.StudySession) error {
 
 func (r *studySessionRepository) FindByID(id uint) (*domain.StudySession, error) {
 	var session domain.StudySession
-	err := r.db.Find(&session, id).Error
+	err := r.db.First(&session, id).Error
 	return &session, err
 }
 
@@ -58,4 +58,18 @@ func (r *studySessionRepository) GetUserStats(userID uint) (*domain.StudyStats, 
 		).Scan(&stats).Error
 
 	return &stats, err
+}
+
+func (r *studySessionRepository) FindUpcomingSessions(upcomingTime time.Time) ([]domain.StudySession, error) {
+	var sessions []domain.StudySession
+	err := r.db.Where("planned_for <= ? AND planned_for >= ? AND completed = ?",
+		upcomingTime, time.Now(), false).Find(&sessions).Error
+	return sessions, err
+}
+
+func (r *studySessionRepository) FindCompletedSessions(userID uint, from, to time.Time) ([]domain.StudySession, error) {
+	var sessions []domain.StudySession
+	err := r.db.Where("user_id = ? AND completed = ? AND completed_at BETWEEN ? AND ?",
+		userID, true, from, to).Order("completed_at DESC").Find(&sessions).Error
+	return sessions, err
 }
