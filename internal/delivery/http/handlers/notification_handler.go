@@ -18,7 +18,7 @@ func NewNotificationHandler(notificationSvc *service.NotificationService) *Notif
 	}
 }
 
-func (h *NotificationHandler) GetNotificaitons(c *gin.Context) {
+func (h *NotificationHandler) GetNotifications(c *gin.Context) {
 	userID := c.GetUint("userID")
 	unreadOnly, _ := strconv.ParseBool(c.Query("unread"))
 
