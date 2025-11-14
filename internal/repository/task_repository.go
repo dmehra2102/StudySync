@@ -45,3 +45,10 @@ func (r *taskRepository) Update(task *domain.Task) error {
 func (r *taskRepository) Delete(id uint) error {
 	return r.db.Delete(&domain.Task{}, id).Error
 }
+
+func (r *taskRepository) FindOverdueTasks() ([]domain.Task, error) {
+	var tasks []domain.Task
+	err := r.db.Where("due_date < ? AND status = ?",
+		time.Now(), "pending").Find(&tasks).Error
+	return tasks, err
+}

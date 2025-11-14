@@ -22,4 +22,5 @@ type TaskRepository interface {
 	FindOverdue(userID uint) ([]Task, error)
 	Update(task *Task) error
 	Delete(id uint) error
+	FindOverdueTasks() ([]Task, error)
 }

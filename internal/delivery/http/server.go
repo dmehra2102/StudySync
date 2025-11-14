@@ -1,6 +1,9 @@
 package http
 
 import (
+	"context"
+	"net/http"
+
 	"github.com/dmehra2102/StudySync/internal/config"
 	"github.com/dmehra2102/StudySync/internal/delivery/http/handlers"
 	"github.com/dmehra2102/StudySync/internal/delivery/http/middleware"
@@ -14,11 +17,11 @@ import (
 )
 
 type Server struct {
-	cfg    *config.Config
-	router *gin.Engine
-	db     *gorm.DB
-	redis  *redis.Client
-	log    *logger.Logger
+	cfg        *config.Config
+	db         *gorm.DB
+	redis      *redis.Client
+	log        *logger.Logger
+	httpServer *http.Server
 }
 
 func NewServer(cfg *config.Config, db *gorm.DB, redis *redis.Client, log *logger.Logger) *Server {
@@ -39,6 +42,11 @@ func (s *Server) setupRouter() {
 	}
 
 	router := gin.New()
+
+	s.httpServer = &http.Server{
+		Addr:    s.cfg.App.Port,
+		Handler: router,
+	}
 
 	// middleware
 	router.Use(gin.Recovery())
@@ -121,9 +129,12 @@ func (s *Server) setupRouter() {
 		})
 	})
 
-	s.router = router
 }
 
 func (s *Server) Start() error {
-	return s.router.Run(":" + s.cfg.App.Port)
+	return s.httpServer.ListenAndServe()
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }

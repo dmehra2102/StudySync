@@ -32,12 +32,12 @@ func NewSchedulerService(
 	}
 }
 
-func (s *SchedulerService) Start(userId uint) {
+func (s *SchedulerService) Start() {
 	// Check for upcoming study sessions every 5 minutes
 	s.cron.AddFunc("*/5 * * * *", s.checkUpcomingSessions)
 
 	// Check for overdue tasks every hour
-	s.cron.AddFunc("0 * * * *", func() { s.checkOverdueTasks(userId) })
+	s.cron.AddFunc("0 * * * *", s.checkOverdueTasks)
 
 	s.cron.Start()
 	log.Println("Background scheduler started")
@@ -77,8 +77,8 @@ func (s *SchedulerService) checkUpcomingSessions() {
 	}
 }
 
-func (s *SchedulerService) checkOverdueTasks(userID uint) {
-	tasks, err := s.taskRepo.FindOverdue(userID)
+func (s *SchedulerService) checkOverdueTasks() {
+	tasks, err := s.taskRepo.FindOverdueTasks()
 	if err != nil {
 		log.Printf("Error fetching overdue tasks: %v", err)
 		return
