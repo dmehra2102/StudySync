@@ -31,6 +31,23 @@ type UpdateTaskRequest struct {
 	DueDate     time.Time `json:"due_date"`
 }
 
+func (s *TaskService) CreateTask(userID uint, req CreateTaskRequest) (*domain.Task, error) {
+	task := &domain.Task{
+		UserID:      userID,
+		Title:       req.Title,
+		Description: req.Description,
+		Priority:    req.Priority,
+		Status:      "pending",
+		DueDate:     req.DueDate,
+	}
+
+	if err := s.taskRepo.Create(task); err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
 func (s *TaskService) GetUserTasks(userID uint) ([]domain.Task, error) {
 	return s.taskRepo.FindByUserID(userID)
 }
