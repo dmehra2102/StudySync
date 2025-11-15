@@ -38,7 +38,7 @@ func (a *JWTAuth) GenerateToken(userID uint, email, role string) (string, error)
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(a.secretKey)
+	return token.SignedString([]byte(a.secretKey))
 }
 
 func (a *JWTAuth) ValidateToken(tokenString string) (*Claims, error) {

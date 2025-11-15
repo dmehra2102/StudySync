@@ -20,7 +20,6 @@ func New(cfg config.RedisConfig) *Client {
 	if err != nil {
 		opt = &redis.Options{
 			Addr:     cfg.URL,
-			Password: "",
 			DB:       0,
 		}
 	}
@@ -28,7 +27,7 @@ func New(cfg config.RedisConfig) *Client {
 	client := redis.NewClient(opt)
 
 	ctx := context.Background()
-	if err := client.Ping(ctx); err != nil {
+	if err := client.Ping(ctx).Err(); err != nil {
 		panic(fmt.Sprintf("Failed to connect to Redis: %v", err))
 	}
 
