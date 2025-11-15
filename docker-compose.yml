@@ -7,7 +7,7 @@ services:
       - APP_ENV=development
       - DB_HOST=postgres
       - DB_PORT=5432
-      - REDIS_URL=redis:6379
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - postgres
       - redis
@@ -21,8 +21,11 @@ services:
       POSTGRES_USER: studysync_user
       POSTGRES_PASSWORD: studysync_password
       POSTGRES_DB: studysync_db
+    ports:
+      - "5432:5432"
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   redis:
@@ -32,3 +35,7 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
