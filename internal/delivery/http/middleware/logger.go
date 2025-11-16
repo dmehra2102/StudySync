@@ -19,7 +19,11 @@ func Logger(log *logger.Logger) gin.HandlerFunc {
 		clientIP := ctx.ClientIP()
 		method := ctx.Request.Method
 		statusCode := ctx.Writer.Status()
-		errorMessage := ctx.Errors.ByType(gin.ErrorTypePrivate).String()
+
+		var errMsg string
+		if lastErr := ctx.Errors.Last(); lastErr != nil {
+			errMsg = lastErr.Error()
+		}
 
 		if query != "" {
 			path = path + "?" + query
@@ -30,13 +34,17 @@ func Logger(log *logger.Logger) gin.HandlerFunc {
 			event = log.Error()
 		}
 
-		event.
+		event = event.
 			Str("client_ip", clientIP).
 			Str("method", method).
 			Int("status_code", statusCode).
 			Str("path", path).
-			Dur("latency", latency).
-			Str("error", errorMessage).
-			Msg("HTTP request")
+			Str("latency", latency.String())
+
+		if errMsg != "" {
+			event = event.Str("error", errMsg)
+		}
+
+		event.Msg("HTTP Request")
 	}
 }

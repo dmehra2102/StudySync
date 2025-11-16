@@ -16,6 +16,13 @@ type StudySession struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+type StudyStats struct {
+	TotalSessions   int     `json:"total_sessions"`
+	Completed       int     `json:"completed_Sessions"`
+	TotalTime       int     `json:"total_time_minutes"`
+	AverageDuration float64 `json:"average_duration_minutes"`
+}
+
 type StudySessionRepository interface {
 	Create(session *StudySession) error
 	FindByID(id uint) (*StudySession, error)
@@ -26,11 +33,4 @@ type StudySessionRepository interface {
 	GetUserStats(userID uint) (*StudyStats, error)
 	FindUpcomingSessions(upcomingTime time.Time) ([]StudySession, error)
 	FindCompletedSessions(userID uint, from, to time.Time) ([]StudySession, error)
-}
-
-type StudyStats struct {
-	TotalSessions   int     `json:"total_sessions"`
-	Completed       int     `json:"completed_Sessions"`
-	TotalTime       int     `json:"total_time_minutes"`
-	AverageDuration float64 `json:"average_duration_minutes"`
 }

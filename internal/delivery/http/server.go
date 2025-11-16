@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/dmehra2102/StudySync/internal/config"
 	"github.com/dmehra2102/StudySync/internal/delivery/http/handlers"
@@ -52,6 +53,8 @@ func (s *Server) setupRouter() {
 	router.Use(gin.Recovery())
 	router.Use(middleware.Logger(s.log))
 	router.Use(middleware.CORS())
+	router.Use(gin.Recovery())
+	router.Use(middleware.RequestTimeout(5 * time.Second))
 
 	// Initialize dependencies
 	jwtAuth := auth.NewJWTAuth(s.cfg.Auth.JWTSecret, s.cfg.Auth.JWTExpiry)

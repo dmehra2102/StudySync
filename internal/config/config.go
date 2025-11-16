@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"time"
 
@@ -44,7 +45,10 @@ type LogConfig struct {
 }
 
 func Load() (*Config, error) {
-	_ = godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error loading .env file")
+	}
 
 	jwtExpiry, _ := time.ParseDuration(getEnv("JWT_EXPIRY", "24h"))
 

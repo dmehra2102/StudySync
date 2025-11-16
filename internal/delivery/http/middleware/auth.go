@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -28,7 +27,6 @@ func AuthMiddleware(jwtAuth *auth.JWTAuth) gin.HandlerFunc {
 		}
 
 		token := parts[1]
-		fmt.Println("TOkenwa : ", token)
 		claims, err := jwtAuth.ValidateToken(token)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})

@@ -23,13 +23,15 @@ func (h *StudySessionHandler) CreateSession(c *gin.Context) {
 
 	var req service.CreateSessionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	session, err := h.studySessionSvc.CreateSession(userID, req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create study session"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -44,8 +46,9 @@ func (h *StudySessionHandler) GetSessions(c *gin.Context) {
 
 	sessions, err := h.studySessionSvc.GetUserSessions(userID)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to fetch user study sessions",
+			"error": err.Error(),
 		})
 		return
 	}
@@ -59,8 +62,9 @@ func (h *StudySessionHandler) GetUpcomingSessions(c *gin.Context) {
 	sessions, err := h.studySessionSvc.GetUpcomingSessions(userID)
 
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to fetch user study sessions",
+			"error": err.Error(),
 		})
 		return
 	}
@@ -73,7 +77,8 @@ func (h *StudySessionHandler) GetStats(c *gin.Context) {
 
 	stats, err := h.studySessionSvc.GetUserStats(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch session stats"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -85,13 +90,15 @@ func (h *StudySessionHandler) GetSession(c *gin.Context) {
 
 	sessionID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid session ID"})
 		return
 	}
 
 	session, err := h.studySessionSvc.GetSession(userID, uint(sessionID))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch session"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -103,18 +110,21 @@ func (h *StudySessionHandler) UpdateSession(c *gin.Context) {
 
 	sessionID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid session ID"})
 		return
 	}
 
 	var req service.UpdateSessionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	session, err := h.studySessionSvc.UpdateSession(userID, uint(sessionID), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update study session"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -129,12 +139,14 @@ func (h *StudySessionHandler) DeleteSession(c *gin.Context) {
 
 	sessionID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid session ID"})
 		return
 	}
 
 	if err := h.studySessionSvc.DeleteSession(userID, uint(sessionID)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete study session"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

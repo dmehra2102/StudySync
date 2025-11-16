@@ -23,13 +23,15 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 
 	var req service.CreateTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	task, err := h.taskSvc.CreateTask(userID, req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create task"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -44,7 +46,8 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 
 	tasks, err := h.taskSvc.GetUserTasks(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -58,7 +61,8 @@ func (h *TaskHandler) GetOverdueTasks(c *gin.Context) {
 
 	tasks, err := h.taskSvc.GetOverdueTasks(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch overdue tasks"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -72,19 +76,22 @@ func (h *TaskHandler) UpdateTask(c *gin.Context) {
 
 	taskID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
 		return
 	}
 
 	var req service.UpdateTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	task, err := h.taskSvc.UpdateTask(userID, uint(taskID), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update task"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -99,12 +106,14 @@ func (h *TaskHandler) DeleteTask(c *gin.Context) {
 
 	taskID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
 		return
 	}
 
 	if err := h.taskSvc.DeleteTask(userID, uint(taskID)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete task"})
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -116,13 +125,15 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 
 	taskID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
+		c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
 		return
 	}
 
 	task, err := h.taskSvc.GetTask(userID, uint(taskID))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		c.Error(err)
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
