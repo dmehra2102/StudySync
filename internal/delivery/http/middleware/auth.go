@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -12,6 +13,7 @@ func AuthMiddleware(jwtAuth *auth.JWTAuth) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
+			ctx.Error(errors.New("authorization header required"))
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
 
 			ctx.Abort()
@@ -20,6 +22,7 @@ func AuthMiddleware(jwtAuth *auth.JWTAuth) gin.HandlerFunc {
 
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
+			ctx.Error(errors.New("invalid authorization format"))
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization format"})
 
 			ctx.Abort()
@@ -29,6 +32,7 @@ func AuthMiddleware(jwtAuth *auth.JWTAuth) gin.HandlerFunc {
 		token := parts[1]
 		claims, err := jwtAuth.ValidateToken(token)
 		if err != nil {
+			ctx.Error(err)
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			ctx.Abort()
 			return

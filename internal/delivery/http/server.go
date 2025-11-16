@@ -54,7 +54,7 @@ func (s *Server) setupRouter() {
 	router.Use(middleware.Logger(s.log))
 	router.Use(middleware.CORS())
 	router.Use(gin.Recovery())
-	router.Use(middleware.RequestTimeout(5 * time.Second))
+	router.Use(middleware.RequestTimeout(10 * time.Second))
 
 	// Initialize dependencies
 	jwtAuth := auth.NewJWTAuth(s.cfg.Auth.JWTSecret, s.cfg.Auth.JWTExpiry)
