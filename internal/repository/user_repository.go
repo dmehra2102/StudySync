@@ -20,13 +20,19 @@ func (r *userRepository) Create(user *domain.User) error {
 func (r *userRepository) FindByID(id uint) (*domain.User, error) {
 	var user domain.User
 	err := r.db.First(&user, id).Error
-	return &user, err
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	err := r.db.Where("email = ?", email).First(&user).Error
-	return &user, err
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (r *userRepository) Update(user *domain.User) error {

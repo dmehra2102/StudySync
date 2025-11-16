@@ -19,8 +19,8 @@ func New(cfg config.RedisConfig) *Client {
 	opt, err := redis.ParseURL(cfg.URL)
 	if err != nil {
 		opt = &redis.Options{
-			Addr:     cfg.URL,
-			DB:       0,
+			Addr: cfg.URL,
+			DB:   0,
 		}
 	}
 

@@ -44,7 +44,7 @@ func (s *Server) setupRouter() {
 	router := gin.New()
 
 	s.httpServer = &http.Server{
-		Addr:    s.cfg.App.Port,
+		Addr:    ":" + s.cfg.App.Port,
 		Handler: router,
 	}
 
